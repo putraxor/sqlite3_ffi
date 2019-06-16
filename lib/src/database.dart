@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import "dart:collection";
+import 'dart:convert';
 import "dart:ffi";
 
 import "bindings/bindings.dart";
@@ -58,12 +59,29 @@ class Database {
   }
 
   /// Execute a query, discarding any returned rows.
-  void execute(String query) {
+  void execute(String query, {List params}) {
     Pointer<StatementPointer> statementOut = allocate();
     CString queryC = CString.allocate(query);
     int resultCode = bindings.sqlite3_prepare_v2(
         _database, queryC, -1, statementOut, fromAddress(0));
+
     StatementPointer statement = statementOut.load();
+    if (params != null) {
+      for (var i = 0; i < params.length; i++) {
+        if (params[i].runtimeType.toString() == 'int') {
+          bindings.sqlite3_bind_int(statement, i + 1, params[i]);
+        }
+        if (params[i].runtimeType.toString() == 'double') {
+          bindings.sqlite3_bind_double(statement, i + 1, params[i]);
+        }
+        if (params[i].runtimeType.toString() == 'String') {
+          String param = utf8.decode(utf8.encode(params[i]));
+          var text = CString.allocate(param);
+          bindings.sqlite3_bind_text(statement, i + 1, text);
+          text.free();
+        }
+      }
+    }
     statementOut.free();
     queryC.free();
 
@@ -83,6 +101,7 @@ class Database {
     int resultCode = bindings.sqlite3_prepare_v2(
         _database, queryC, -1, statementOut, fromAddress(0));
     StatementPointer statement = statementOut.load();
+
     statementOut.free();
     queryC.free();
 

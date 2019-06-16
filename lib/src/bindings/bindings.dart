@@ -326,8 +326,27 @@ class _SQLiteBindings {
   /// error code and message may or may not be set.
   CString Function(DatabasePointer database) sqlite3_errmsg;
 
+  int Function(StatementPointer statement, int columnIndex, double value)
+      sqlite3_bind_double;
+  int Function(StatementPointer statement, int columnIndex, int value)
+      sqlite3_bind_int;
+  int Function(StatementPointer statement, int columnIndex, CString value)
+      sqlite3_bind_text;
+
   _SQLiteBindings() {
     sqlite = dlopenPlatformSpecific("sqlite3");
+
+    sqlite3_bind_double = sqlite
+        .lookup<NativeFunction<sqlite3_bind_double_native>>(
+            "sqlite3_bind_double")
+        .asFunction();
+    sqlite3_bind_int = sqlite
+        .lookup<NativeFunction<sqlite3_bind_int_native>>("sqlite3_bind_int")
+        .asFunction();
+    sqlite3_bind_text = sqlite
+        .lookup<NativeFunction<sqlite3_bind_text_native>>("sqlite3_bind_text")
+        .asFunction();
+
     sqlite3_open_v2 = sqlite
         .lookup<NativeFunction<sqlite3_open_v2_native_t>>("sqlite3_open_v2")
         .asFunction();

@@ -6,6 +6,8 @@ import "dart:ffi";
 
 import "../ffi/cstring.dart";
 
+class FunctionPointer extends Pointer<Void> {}
+
 /// Database Connection Handle
 ///
 /// Each open SQLite database is represented by a pointer to an instance of

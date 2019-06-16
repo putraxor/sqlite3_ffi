@@ -53,3 +53,10 @@ typedef sqlite3_column_int_native_t = Int32 Function(
 
 typedef sqlite3_column_text_native_t = CString Function(
     StatementPointer statement, Int32 columnIndex);
+
+typedef sqlite3_bind_double_native = Int32 Function(
+    StatementPointer statement, Int32 columnIndex, Double value);
+typedef sqlite3_bind_int_native = Int32 Function(
+    StatementPointer statement, Int32 columnIndex, Int32 value);
+typedef sqlite3_bind_text_native = Int32 Function(
+    StatementPointer statement, Int32 columnIndex, CString value);

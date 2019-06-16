@@ -2,6 +2,15 @@ import "../lib/sqlite.dart";
 
 void main() {
   Database d = Database("test.db");
+  d.execute("update Cookies set name='Changed' where name=?",
+      params: ['Google']);
+  var rows = d.query('select * from Cookies');
+  rows.forEach((row) {
+    var id = row.readColumnByIndexAsInt(0);
+    var name = row.readColumnByIndexAsText(1);
+    print('$id $name ');
+  });
+  return;
   d.execute("drop table if exists Cookies;");
   d.execute("""
       create table Cookies (
